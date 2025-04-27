@@ -52,7 +52,8 @@ This project is designed with **scalability** and **efficiency** in mind:
    - Based on the skills requested, the system returns a list of matching profiles sorted by relevance.
 
 ## 🌟 Getting Started
-
+ uvicorn backend_plagia:app
+ 
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/mounibnasr45/plagia_detector.git
