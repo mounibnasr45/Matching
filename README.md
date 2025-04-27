@@ -1,4 +1,4 @@
-# Matching
+# Matching algorithm explainability  MSIT • Ai/UX
 # Plagiarism Detector & Skill Matcher
 
 Welcome to **Plagiarism Detector & Skill Matcher**, a cutting-edge solution designed to classify text as either human-written or AI-generated, while also providing an intelligent way to match job profiles based on skillsets. This project combines the power of **AI models** with **semantic matching** techniques to streamline talent acquisition and plagiarism detection.
