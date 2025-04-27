@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Système de Matching des Compétences</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-dark: #2980b9;
+            --secondary-color: #2c3e50;
+            --light-gray: #f5f5f7;
+            --gray: #95a5a6;
+            --success: #2ecc71;
+            --white: #ffffff;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-gray);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--secondary-color);
+            color: var(--white);
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        header p {
+            opacity: 0.9;
+        }
+        
+        /* Main Content */
+        main {
+            padding: 30px 0;
+        }
+        
+        .card {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        h2 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        /* Skills Selection */
+        .skills-section {
+            margin-bottom: 30px;
+        }
+        
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .skill-btn {
+            background-color: #e0e0e0;
+            color: #333;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .skill-btn:hover {
+            background-color: #d0d0d0;
+        }
+        
+        .skill-btn.selected {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+        
+        /* Custom Skill Input */
+        .custom-skill {
+            margin-top: 20px;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .input-group button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .input-group button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        /* Search Button */
+        .search-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .search-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .search-btn:disabled {
+            background-color: var(--gray);
+            cursor: not-allowed;
+        }
+        
+        /* Selected Skills Display */
+        .selected-skills {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .skill-tag {
+            display: flex;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .remove-skill {
+            margin-left: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Loading Indicator */
+        .loading {
+            display: none;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0,0,0,0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Results Section */
+        .results-section {
+            display: none;
+        }
+        
+        .result-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .profile-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .match-score {
+            background-color: #ebf5fb;
+            color: var(--primary-dark);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        
+        .skills-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+        
+        .profile-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .profile-skill {
+            background-color: var(--light-gray);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .profile-skill.matched {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        /* Error Message */
+        .error-message {
+            display: none;
+            background-color: #ffecec;
+            color: #e74c3c;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        /* No Results */
+        .no-results {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .result-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .match-score {
+                margin-top: 10px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Système de Matching des Compétences</h1>
+            <p>Trouvez les profils qui correspondent le mieux à vos besoins en compétences</p>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="card skills-section">
+            <h2>Sélectionnez les compétences recherchées</h2>
+            
+            <div class="skills-container" id="hardSkills">
+                <!-- Hard skills will be added here by JavaScript -->
+            </div>
+            
+            <div class="custom-skill">
+                <h3 style="font-size: 16px; margin-bottom: 10px;">Ajouter une compétence personnalisée:</h3>
+                <div class="input-group">
+                    <input type="text" id="customSkillInput" placeholder="Entrez une compétence">
+                    <button id="addCustomSkill">Ajouter</button>
+                </div>
+            </div>
+            
+            <div class="selected-skills" id="selectedSkills">
+                <!-- Selected skills will appear here -->
+            </div>
+        </div>
+        
+        <button id="searchBtn" class="search-btn">Rechercher des profils</button>
+        
+        <div id="errorMessage" class="error-message"></div>
+        
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+        </div>
+        
+        <div id="noResults" class="no-results">
+            Aucun profil correspondant trouvé. Essayez avec d'autres compétences.
+        </div>
+        
+        <div id="resultsSection" class="results-section">
+            <h2>Profils correspondants</h2>
+            <div id="resultsContainer">
+                <!-- Results will be added here by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sample initial skills - in a real app, you would fetch these from your API
+        const INITIAL_SKILLS = [
+            "Python", "JavaScript", "Java", "SQL", "React", 
+            "Node.js", "Machine Learning", "Data Analysis", 
+            "AWS", "Docker", "Git", "DevOps",
+            "Communication", "Leadership", "Teamwork", 
+            "Problem Solving", "Adaptability"
+        ];
+        
+        // DOM Elements
+        const hardSkillsContainer = document.getElementById('hardSkills');
+        const selectedSkillsContainer = document.getElementById('selectedSkills');
+        const customSkillInput = document.getElementById('customSkillInput');
+        const addCustomSkillBtn = document.getElementById('addCustomSkill');
+        const searchBtn = document.getElementById('searchBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const loading = document.getElementById('loading');
+        const resultsSection = document.getElementById('resultsSection');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const noResults = document.getElementById('noResults');
+        
+        // State
+        let selectedSkills = [];
+        
+        // Initialize the application
+        function init() {
+            renderSkills();
+            addEventListeners();
+        }
+        
+        // Render the initial skills buttons
+        function renderSkills() {
+            INITIAL_SKILLS.forEach(skill => {
+                const skillBtn = createSkillButton(skill);
+                hardSkillsContainer.appendChild(skillBtn);
+            });
+        }
+        
+        // Create a skill button
+        function createSkillButton(skill) {
+            const btn = document.createElement('button');
+            btn.className = 'skill-btn';
+            btn.textContent = skill;
+            btn.onclick = () => toggleSkill(skill, btn);
+            return btn;
+        }
+        
+        // Toggle skill selection
+        function toggleSkill(skill, btn) {
+            if (selectedSkills.includes(skill)) {
+                // Deselect skill
+                selectedSkills = selectedSkills.filter(s => s !== skill);
+                btn.classList.remove('selected');
+                // Remove from selected skills display
+                updateSelectedSkillsDisplay();
+            } else {
+                // Select skill
+                selectedSkills.push(skill);
+                btn.classList.add('selected');
+                // Add to selected skills display
+                updateSelectedSkillsDisplay();
+            }
+        }
+        
+        // Update the selected skills display
+        function updateSelectedSkillsDisplay() {
+            selectedSkillsContainer.innerHTML = '';
+            
+            if (selectedSkills.length === 0) {
+                selectedSkillsContainer.style.display = 'none';
+                return;
+            }
+            
+            selectedSkillsContainer.style.display = 'flex';
+            
+            selectedSkills.forEach(skill => {
+                const tag = document.createElement('div');
+                tag.className = 'skill-tag';
+                
+                const skillText = document.createElement('span');
+                skillText.textContent = skill;
+                
+                const removeBtn = document.createElement('span');
+                removeBtn.className = 'remove-skill';
+                removeBtn.innerHTML = '&times;'; // × symbol
+                removeBtn.onclick = () => removeSkill(skill);
+                
+                tag.appendChild(skillText);
+                tag.appendChild(removeBtn);
+                selectedSkillsContainer.appendChild(tag);
+            });
+        }
+        
+        // Remove a skill
+        function removeSkill(skill) {
+            selectedSkills = selectedSkills.filter(s => s !== skill);
+            
+            // Update button state if it exists
+            document.querySelectorAll('.skill-btn').forEach(btn => {
+                if (btn.textContent === skill) {
+                    btn.classList.remove('selected');
+                }
+            });
+            
+            updateSelectedSkillsDisplay();
+        }
+        
+        // Add custom skill
+        function addCustomSkill() {
+            const skill = customSkillInput.value.trim();
+            
+            if (!skill) {
+                showError("Veuillez entrer une compétence valide");
+                return;
+            }
+            
+            // Check if already exists
+            if (selectedSkills.includes(skill)) {
+                showError("Cette compétence est déjà sélectionnée");
+                return;
+            }
+            
+            // Add to selected skills
+            selectedSkills.push(skill);
+            updateSelectedSkillsDisplay();
+            
+            // Check if button already exists, if not create one
+            let existingBtn = null;
+            document.querySelectorAll('.skill-btn').forEach(btn => {
+                if (btn.textContent === skill) {
+                    existingBtn = btn;
+                    btn.classList.add('selected');
+                }
+            });
+            
+            if (!existingBtn) {
+                const newBtn = createSkillButton(skill);
+                newBtn.classList.add('selected');
+                hardSkillsContainer.appendChild(newBtn);
+            }
+            
+            // Clear input
+            customSkillInput.value = '';
+            hideError();
+        }
+        
+        // Search for matching profiles
+        function searchProfiles() {
+            if (selectedSkills.length === 0) {
+                showError("Veuillez sélectionner au moins une compétence");
+                return;
+            }
+            
+            // Hide previous results and error messages
+            hideError();
+            resultsSection.style.display = 'none';
+            noResults.style.display = 'none';
+            
+            // Show loading indicator
+            loading.style.display = 'flex';
+            
+            // Prepare the request data
+            const requestData = {
+                id: 1, // Using a default ID for now
+                competences_recherchees: selectedSkills
+            };
+            
+            // Send API request
+            fetch('http://localhost:8000/matching/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la communication avec le serveur');
+                }
+                return response.json();
+            })
+            .then(data => {
+                displayResults(data);
+            })
+            .catch(error => {
+                showError(error.message || 'Une erreur est survenue');
+            })
+            .finally(() => {
+                loading.style.display = 'none';
+            });
+        }
+        
+        // Display the results
+        function displayResults(results) {
+            resultsContainer.innerHTML = '';
+            
+            if (results.length === 0) {
+                noResults.style.display = 'block';
+                return;
+            }
+            
+            results.forEach(profile => {
+                const resultCard = document.createElement('div');
+                resultCard.className = 'result-card';
+                
+                const header = document.createElement('div');
+                header.className = 'result-header';
+                
+                const name = document.createElement('div');
+                name.className = 'profile-name';
+                name.textContent = profile.nom;
+                
+                const score = document.createElement('div');
+                score.className = 'match-score';
+                // Convert score to percentage and format to 1 decimal place
+                const scorePercentage = (profile.score * 100).toFixed(1);
+                score.textContent = `${scorePercentage}% Correspondance`;
+                
+                header.appendChild(name);
+                header.appendChild(score);
+                
+                const skillsLabel = document.createElement('div');
+                skillsLabel.className = 'skills-label';
+                skillsLabel.textContent = 'Compétences:';
+                
+                const profileSkills = document.createElement('div');
+                profileSkills.className = 'profile-skills';
+                
+                profile.competences.forEach(skill => {
+                    const skillElement = document.createElement('span');
+                    skillElement.className = 'profile-skill';
+                    
+                    // Highlight skills that match selected skills
+                    if (selectedSkills.includes(skill)) {
+                        skillElement.classList.add('matched');
+                    }
+                    
+                    skillElement.textContent = skill;
+                    profileSkills.appendChild(skillElement);
+                });
+                
+                resultCard.appendChild(header);
+                resultCard.appendChild(skillsLabel);
+                resultCard.appendChild(profileSkills);
+                
+                resultsContainer.appendChild(resultCard);
+            });
+            
+            resultsSection.style.display = 'block';
+        }
+        
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+        
+        // Hide error message
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+        
+        // Add event listeners
+        function addEventListeners() {
+            addCustomSkillBtn.addEventListener('click', addCustomSkill);
+            
+            customSkillInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addCustomSkill();
+                }
+            });
+            
+            searchBtn.addEventListener('click', searchProfiles);
+        }
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
