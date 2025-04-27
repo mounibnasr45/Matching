@@ -57,3 +57,7 @@ This project is designed with **scalability** and **efficiency** in mind:
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/mounibnasr45/plagia_detector.git
+
+For questions or feedback, feel free to reach out:
+
+Email: mounibnasr123@gmail.com GitHub: mounibnasr45 Enjoy using the Plagiarism Classifier!
