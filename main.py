@@ -48,3 +48,6 @@ def get_matching_profiles(skill_request: SkillRequest):
     sorted_profiles = sorted(matching_profiles, key=lambda x: x['score'], reverse=True)
     
     return sorted_profiles
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=port)
