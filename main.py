@@ -3,9 +3,10 @@ from pydantic import BaseModel
 import pandas as pd
 from utils import calculate_similarity, get_embeddings
 from models import Profile, SkillRequest
-
+import os
 app = FastAPI()
 from fastapi.middleware.cors import CORSMiddleware
+port = int(os.environ.get("PORT", 8000))
 
 app.add_middleware(
     CORSMiddleware,
